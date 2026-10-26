@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wellvoyant</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: tabbed site (Home, Past Events, Team, Contact) under a sticky header. Forest green from the logo, soft green washes, one marigold accent. */
+:root{
+  --bg:#f6f9f7;
+  --surface:#ffffff;
+  --wash:#e4efe9;
+  --ink:#132a22;
+  --muted:#4e6a5f;
+  --line:#d2e2da;
+  --teal:#2f5d4d;
+  --teal-strong:#22463a;
+  --marigold:#e9a21b;
+  --on-teal:#f3fbf9;
+  --font-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1:clamp(.8rem,.78rem + .1vw,.86rem);
+  --step-0:clamp(1rem,.96rem + .2vw,1.08rem);
+  --step-1:clamp(1.2rem,1.1rem + .5vw,1.45rem);
+  --step-2:clamp(1.6rem,1.35rem + 1.1vw,2.3rem);
+  --step-3:clamp(2.2rem,1.7rem + 2.4vw,3.6rem);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1a15;--surface:#13261f;--wash:#183126;--ink:#e5f2ec;--muted:#9cb8ac;
+    --line:#26443a;--teal:#7fc7a6;--teal-strong:#a3dcc1;--marigold:#f2b744;--on-teal:#07201a;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1a15;--surface:#13261f;--wash:#183126;--ink:#e5f2ec;--muted:#9cb8ac;
+  --line:#26443a;--teal:#7fc7a6;--teal-strong:#a3dcc1;--marigold:#f2b744;--on-teal:#07201a;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);line-height:1.1;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--marigold);outline-offset:3px;border-radius:6px}
+.eyebrow{font-family:var(--font-mono);font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--font-display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em}
+.brand svg{flex:none}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+
+
+.mark{width:34px;height:34px;flex:none;background:var(--teal);-webkit-mask:url(img/logo-mark.png) center/contain no-repeat;mask:url(img/logo-mark.png) center/contain no-repeat}
+.nav button{font:600 .95rem/1 var(--font-body);color:var(--muted);background:none;border:0;padding:9px 14px;border-radius:999px;cursor:pointer}
+.nav button:hover{color:var(--ink);background:var(--wash)}
+.nav button[aria-selected="true"]{background:var(--teal);color:var(--on-teal)}
+.panel{min-height:60vh}
+.panel[hidden]{display:none!important}
+.panel.in{animation:fade .28s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.logo-card{background:var(--surface);border:1px solid var(--line);border-radius:50%;aspect-ratio:1/1;max-width:min(380px,100%);width:100%;justify-self:center;display:grid;place-items:center;align-content:center;gap:10px;padding:12%;box-shadow:0 24px 60px -36px color-mix(in srgb,var(--teal) 70%,transparent)}
+.logo-full{display:block;width:100%;aspect-ratio:436/324;max-width:100%;background:var(--teal);-webkit-mask:url(img/logo-full.png) center/contain no-repeat;mask:url(img/logo-full.png) center/contain no-repeat}
+.chart-cap{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+
+/* hero */
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px);align-items:center;padding-block:clamp(48px,8vw,96px)}
+.hero-copy{display:grid;gap:20px;min-width:0}
+.hero h1{font-size:var(--step-3);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p.lede{font-size:var(--step-1);color:var(--muted);max-width:34ch;line-height:1.45}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;padding:12px 20px;border-radius:999px;border:1.5px solid var(--teal);font-size:1rem;cursor:pointer;font-family:var(--font-body)}
+.btn.primary{background:var(--teal);color:var(--on-teal)}
+.btn.primary:hover{background:var(--teal-strong);border-color:var(--teal-strong)}
+.btn.ghost{background:transparent;color:var(--teal)}
+.btn.ghost:hover{background:var(--wash)}
+
+
+/* sections */
+
+.section .wrap{padding-block:clamp(56px,8vw,96px);display:grid;gap:clamp(28px,4vw,44px)}
+.head{display:grid;gap:12px;max-width:62ch}
+.head h2{font-size:var(--step-2);font-weight:800;letter-spacing:-.015em}
+.head p{color:var(--muted)}
+
+.vision{background:var(--teal);color:var(--on-teal)}
+.vision .eyebrow{color:var(--marigold)}
+.vision .wrap{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:start}
+.vision h2{font-size:var(--step-2);font-weight:800}
+.vision p{font-size:var(--step-1);line-height:1.5;max-width:52ch}
+
+.pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.pillar{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;display:grid;gap:12px;align-content:start}
+.pillar .tag{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);letter-spacing:.1em}
+.pillar h3{font-size:var(--step-1);font-weight:700}
+.pillar p{color:var(--muted)}
+.pillar .ico{width:44px;height:44px;border-radius:12px;background:var(--wash);display:grid;place-items:center;color:var(--teal)}
+
+.quote{background:var(--wash)}
+.quote .wrap{padding-block:clamp(48px,7vw,80px);justify-items:center;text-align:center;gap:14px}
+.quote blockquote{margin:0;font-family:var(--font-display);font-weight:700;font-size:var(--step-2);max-width:28ch;line-height:1.2;text-wrap:balance}
+.quote blockquote::before{content:"\201C";color:var(--marigold)}
+.quote blockquote::after{content:"\201D";color:var(--marigold)}
+.quote cite{font-style:normal;font-family:var(--font-mono);font-size:var(--step--1);color:var(--muted);letter-spacing:.08em}
+
+/* events */
+.events-group{display:grid;gap:14px}
+.group-title{font-family:var(--font-mono);font-size:var(--step--1);font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.raised{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:22px 26px;border-radius:var(--radius);background:var(--teal);color:var(--on-teal);justify-self:start;max-width:100%}
+.raised .amt{font-family:var(--font-display);font-weight:800;font-size:var(--step-3);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.raised .lbl{font-family:var(--font-mono);font-size:var(--step--1);letter-spacing:.12em;text-transform:uppercase;color:var(--marigold)}
+.events{display:grid;gap:0;border-top:1px solid var(--line)}
+.event{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding-block:28px;border-bottom:1px solid var(--line)}
+.event .kind{display:grid;gap:8px;align-content:start}
+.pill{justify-self:start;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--wash);color:var(--teal);font-weight:500}
+.event h3{font-size:var(--step-1);font-weight:700;margin-bottom:8px}
+.event p{color:var(--muted);max-width:64ch}
+.event ul{margin:12px 0 0;padding-left:1.1em;color:var(--muted);display:grid;gap:4px}
+
+/* team */
+.team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.member{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.member img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;max-width:100%;background:var(--wash)}
+.member .body{padding:18px 18px 22px;display:grid;gap:6px;align-content:start}
+.member .role{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.member h3{font-size:1.2rem;font-weight:700}
+.member p{color:var(--muted);font-size:.95rem;line-height:1.55}
+.member.lead{grid-column:span 2;flex-direction:row}
+.member.lead img{width:46%;aspect-ratio:auto;height:100%;flex:none}
+.member.lead .body{padding:28px;align-content:center}
+.member.lead h3{font-size:var(--step-2)}
+
+/* contact */
+.contact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:grid;gap:10px;min-width:0}
+.card .label{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card .value{font-family:var(--font-display);font-weight:700;font-size:var(--step-1);word-break:break-word;user-select:all}
+.card .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.btn.small{padding:8px 14px;font-size:.9rem}
+
+footer{border-top:1px solid var(--line)}
+footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+
+@media (max-width:900px){
+  .hero .wrap,.vision .wrap{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr}
+  .team{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .event{grid-template-columns:1fr;gap:12px}
+}
+@media (max-width:560px){
+  .team{grid-template-columns:1fr}
+  .member.lead{grid-column:auto;flex-direction:column}
+  .member.lead img{width:100%;aspect-ratio:1/1;height:auto}
+  .member.lead .body{padding:18px 18px 22px}
+  .contact{grid-template-columns:1fr}
+  .nav button{padding:8px 10px;font-size:.88rem}
+  .top .wrap{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home" data-go="home" aria-label="Wellvoyant home">
+      <span class="mark" aria-hidden="true"></span>
+      Wellvoyant
+    </a>
+    <nav class="nav" role="tablist" aria-label="Pages">
+      <button role="tab" id="t-home" data-tab="home" aria-controls="home">Home</button>
+      <button role="tab" id="t-events" data-tab="events" aria-controls="events">Past Events</button>
+      <button role="tab" id="t-team" data-tab="team" aria-controls="team">Team</button>
+      <button role="tab" id="t-contact" data-tab="contact" aria-controls="contact">Contact</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="panel" id="home" role="tabpanel" aria-labelledby="t-home">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Youth-led public health nonprofit</span>
+        <h1>Guided to <em>Health.</em></h1>
+        <p class="lede">We bring health education and essential supplies to the communities that need them most, led by students who want everyone to see wellness clearly.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="#contact" data-go="contact">Get involved</a>
+          <a class="btn ghost" href="#events" data-go="events">See what we've done</a>
+          <a class="btn ghost" href="#team" data-go="team">Meet the team</a>
+        </div>
+      </div>
+      <div class="logo-card">
+        <span class="logo-full" role="img" aria-label="Wellvoyant logo: hands holding a heart with a medical cross"></span>
+        <span class="chart-cap">"Voyant" means "seeing"</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="vision section">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Our vision</span>
+        <h2>Health that is understood, not just treated.</h2>
+      </div>
+      <p>At Wellvoyant, our vision is to create a world where health is not just treated, but understood and empowered. Drawing from the meaning of our name, "to see wellness," we strive to give individuals and communities the knowledge, resources, and foresight needed to take control of their well-being. Through accessible education, preventative initiatives, and community-driven programs, we envision a future where everyone can proactively shape their health journey with confidence and clarity.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">What we do</span>
+        <h2>Three ways we move community health forward.</h2>
+      </div>
+      <div class="pillars">
+        <article class="pillar">
+          <div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h4"/></svg></div>
+          <h3>Health Education</h3>
+          <p>Wellvoyant empowers youth and underserved communities through engaging health workshops, infographics, and seminars on topics like nutrition, mental wellness, hygiene, and disease prevention. By making public health knowledge accessible, we aim to inspire lifelong wellness habits.</p>
+        </article>
+        <article class="pillar">
+          <div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M12 11v5M9.5 13.5h5"/></svg></div>
+          <h3>Community Initiatives</h3>
+          <p>We organize and support local drives, campaigns, and outreach events that directly impact public health, such as water sanitation awareness, hygiene kit distributions, and preventative care programs. Every action we take is designed to address root causes and uplift community health standards.</p>
+        </article>
+        <article class="pillar">
+          <div class="ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+          <h3>Youth Empowerment</h3>
+          <p>Wellvoyant fosters student leadership through volunteering, project development, and career-building opportunities in public health. We provide high schoolers with the tools, mentorship, and real-world experiences to become changemakers in healthcare and beyond.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" aria-label="Quote">
+    <div class="wrap">
+      <blockquote>Education is the most powerful weapon which you can use to change the world.</blockquote>
+      <cite>NELSON MANDELA</cite>
+    </div>
+  </section>
+
+</div>
+
+<div class="panel" id="events" role="tabpanel" aria-labelledby="t-events">
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Past events</span>
+        <h2>Supplies donated, knowledge shared.</h2>
+        <p>A look at the work our team has done in the community so far.</p>
+      </div>
+      <div class="raised">
+        <span class="amt">$15,000</span>
+        <span class="lbl">raised for community health</span>
+      </div>
+      <div class="events-group">
+        <h3 class="group-title">Fundraisers</h3>
+        <div class="events">
+          <article class="event">
+            <div class="kind"><span class="pill">Fundraiser</span></div>
+            <div>
+              <h3>School Bake Sales</h3>
+              <p>Our members baked and sold treats at school, turning student support into funding for health supplies and education materials.</p>
+            </div>
+          </article>
+          <article class="event">
+            <div class="kind"><span class="pill">Fundraiser</span></div>
+            <div>
+              <h3>Community Fundraising Drives</h3>
+              <p>We reached out to friends, families, and local supporters to fund our programs, helping bring our total raised to $15,000.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="events-group">
+        <h3 class="group-title">Donations</h3>
+        <div class="events">
+          <article class="event">
+            <div class="kind"><span class="pill">Donation</span></div>
+            <div>
+              <h3>Hygiene Kits for Local Shelters</h3>
+              <p>We assembled and donated hygiene kits with soap, toothbrushes, toothpaste, and other daily essentials to local shelters and community centers.</p>
+            </div>
+          </article>
+          <article class="event">
+            <div class="kind"><span class="pill">Donation</span></div>
+            <div>
+              <h3>First Aid Supplies</h3>
+              <p>We donated first aid supplies like bandages, antiseptic, and basic care items so community organizations could handle everyday injuries on site.</p>
+            </div>
+          </article>
+          <article class="event">
+            <div class="kind"><span class="pill">Donation</span></div>
+            <div>
+              <h3>Support for Health Research Initiatives</h3>
+              <p>We donated a portion of the funds we raised to health research initiatives, supporting work that advances how diseases are understood, prevented, and treated.</p>
+            </div>
+          </article>
+          <article class="event">
+            <div class="kind"><span class="pill">Health education</span></div>
+            <div>
+              <h3>Health Pamphlets for Schools and Community Centers</h3>
+              <p>We distributed printed health guides on hygiene, nutrition, and disease prevention so every donation came with practical knowledge.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="panel" id="team" role="tabpanel" aria-labelledby="t-team">
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Executive board</span>
+        <h2>The students behind Wellvoyant.</h2>
+      </div>
+      <div class="team">
+        <article class="member lead">
+          <img src="img/srihan.jpg" alt="Srihan Sankepalle" loading="lazy">
+          <div class="body">
+            <span class="role">Founder &amp; CEO</span>
+            <h3>Srihan Sankepalle</h3>
+            <p>Srihan Sankepalle is the founder of Wellvoyant, a youth-led nonprofit dedicated to public health education and community outreach. He is passionate about making health resources accessible to all. Through student-driven initiatives, he works to promote wellness and empower underserved communities.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/suraj.jpg" alt="Suraj Uppuganti" loading="lazy">
+          <div class="body">
+            <span class="role">Vice President</span>
+            <h3>Suraj Uppuganti</h3>
+            <p>Suraj combines his passion for business and analytics to support Wellvoyant's growth and impact. He helps lead strategy, outreach, and operations to ensure effective, data-driven public health initiatives.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/rishan.jpg" alt="Rishan Patel" loading="lazy">
+          <div class="body">
+            <span class="role">Chief Operating Officer</span>
+            <h3>Rishan Patel</h3>
+            <p>Rishan oversees the planning and execution of Wellvoyant's health initiatives. Passionate about leadership and logistics, he ensures our programs run smoothly and effectively across all platforms.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/ariv.jpg" alt="Ariv Srivastava" loading="lazy">
+          <div class="body">
+            <span class="role">Chief Technology Officer</span>
+            <h3>Ariv Srivastava</h3>
+            <p>Ariv leads Wellvoyant's technology strategy and oversees development initiatives that support our mission, using innovative solutions to drive impact and organizational growth.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/abhinav-mosra.jpg" alt="Abhinav Mosra" loading="lazy">
+          <div class="body">
+            <span class="role">Finance Officer</span>
+            <h3>Abhinav Mosra</h3>
+            <p>Abhinav manages Wellvoyant's budget and supply spending, making sure every donated dollar goes as far as possible in the communities we serve.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/varun.jpg" alt="Varun" loading="lazy">
+          <div class="body">
+            <span class="role">Board Member</span>
+            <h3>Varun</h3>
+            <p>Varun supports Wellvoyant's outreach events and health initiatives as a member of the executive board.</p>
+          </div>
+        </article>
+        <article class="member">
+          <img src="img/dhruv.jpg" alt="Dhruv" loading="lazy">
+          <div class="body">
+            <span class="role">Board Member</span>
+            <h3>Dhruv</h3>
+            <p>Dhruv supports Wellvoyant's outreach events and health initiatives as a member of the executive board.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="panel" id="contact" role="tabpanel" aria-labelledby="t-contact">
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Contact</span>
+        <h2>Let's chat.</h2>
+        <p>Have questions, ideas, or want to get involved? Whether you're a student, partner, or supporter, our team is always open to new collaborations and conversations that drive better health for all.</p>
+      </div>
+      <div class="contact">
+        <div class="card">
+          <span class="label">Email</span>
+          <span class="value" id="email-val">wellvoyant@gmail.com</span>
+          <div class="acts">
+            <button class="btn primary small" type="button" data-copy="email-val" id="copy-email">Copy email</button>
+            <a class="btn ghost small" href="mailto:wellvoyant@gmail.com">Open mail app</a>
+          </div>
+        </div>
+        <div class="card">
+          <span class="label">Phone</span>
+          <span class="value" id="phone-val">248-692-7365</span>
+          <div class="acts">
+            <button class="btn primary small" type="button" data-copy="phone-val" id="copy-phone">Copy number</button>
+            <a class="btn ghost small" href="tel:+12486927365">Call</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Wellvoyant. Guided to Health.</span>
+    <a href="#contact" data-go="contact">Get in touch</a>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-copy]").forEach(function(btn){
+  var label=btn.textContent;
+  btn.addEventListener("click",function(){
+    var el=document.getElementById(btn.dataset.copy);
+    var text=el.textContent.trim();
+    var done=function(){btn.textContent="Copied";setTimeout(function(){btn.textContent=label},1600)};
+    var fallback=function(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent="Selected, press copy";setTimeout(function(){btn.textContent=label},2200)};
+    try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+  });
+});
+
+(function(){
+  var tabs=["home","events","team","contact"];
+  function show(name,focus){
+    if(tabs.indexOf(name)<0)name="home";
+    tabs.forEach(function(t){
+      var p=document.getElementById(t),b=document.getElementById("t-"+t),on=t===name;
+      p.hidden=!on;b.setAttribute("aria-selected",on?"true":"false");b.tabIndex=on?0:-1;
+      if(on){p.classList.remove("in");void p.offsetWidth;p.classList.add("in")}
+    });
+    try{history.replaceState(null,"","#"+name)}catch(e){}
+    window.scrollTo(0,0);
+    if(focus)document.getElementById("t-"+name).focus();
+  }
+  document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){show(b.dataset.tab)})});
+  document.querySelectorAll("[data-go]").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();show(a.dataset.go)})});
+  document.querySelector(".nav").addEventListener("keydown",function(e){
+    var i=tabs.indexOf(document.activeElement.dataset&&document.activeElement.dataset.tab);if(i<0)return;
+    if(e.key==="ArrowRight"){show(tabs[(i+1)%4],true);e.preventDefault()}
+    if(e.key==="ArrowLeft"){show(tabs[(i+3)%4],true);e.preventDefault()}
+  });
+  show((location.hash||"#home").slice(1));
+})();
+</script>
+
+</body>
+</html>
